@@ -28,21 +28,38 @@ function createNewGlitch(glitchSize) {
     }
 }
 
-function startGame() {
+function startGlitchNDestroy() {
     console.log("START NEW GAME");
-    highscore = localStorage.highscore;
+    // highscore = localStorage.highscore;
+    // if (typeof (highscore) === "undefined") {
+    //     highscore = 0;
+    // }
     clearGame();
+    initQuotes();
+    initMainScreenButtons();
+    initPixelLetters();
+    initTimers();
+    generateGlitchWords(1);
+    // startNewGame();
+    gameLoop();
+}
+
+function startNewGame() {
+    initTimers();
+    createNewGlitch(2 * 2);
+    initColorOccurrencesArray();
+}
+
+function clearGame() {
+    colorOccurrencesArray.length = 0;
+    timers.length = 0;
+    glitchWords.length = 0;
+    lifepoints = totalLifePoints;
+    score = 0;
+    highscore = localStorage.highscore;
     if (typeof (highscore) === "undefined") {
         highscore = 0;
     }
-    initTimers();
-    initMainScreenButtons();
-    initQuotes();
-    initGlitch(2 * 2);
-    initColorOccurrencesArray();
-    initPixelLetters();
-    generateGlitchWords(1);
-    gameLoop();
 }
 
 function initMainScreenButtons() {
@@ -56,11 +73,6 @@ function gameLoop() {
     draw();
     requestAnimationFrame(gameLoop);
 }
-
-function initGlitch(glitchSize) {
-    createNewGlitch(glitchSize);
-}
-
 
 function initTimers() {
     timers.push(0);//used for shuffling the glitch tiles
@@ -91,20 +103,25 @@ function generateGlitchWords(numOfWords) {
 function update() {
 
     updateTimers();
-    if (isMainScreen || isRulesScreen) {
+    if (isMainScreen || isRulesScreen || isGameOver) {
         if (screenTouched && isPlayButtonSelected(new Vector2(lastScreenTouch.x - externalCanvas.offsetLeft, lastScreenTouch.y - externalCanvas.offsetTop))) {
             isMainScreen = false;
             isGameScreen = true;
+            isGameOver = false;
+            isRulesScreen = false;
             timers[0] = 0;
-        }
-        if (screenTouched && isRulesButtonSelected(new Vector2(lastScreenTouch.x - externalCanvas.offsetLeft, lastScreenTouch.y - externalCanvas.offsetTop))) {
+            clearGame();
+            startNewGame();
+        } else if (screenTouched && isRulesButtonSelected(new Vector2(lastScreenTouch.x - externalCanvas.offsetLeft, lastScreenTouch.y - externalCanvas.offsetTop))) {
             isMainScreen = false;
             isRulesScreen = true;
+            isGameOver = false;
+            isGameScreen = false;
             timers[0] = 0;
         }
     }
-    if (isGameScreen) {
-        if(isGlitchVisible) {
+    else if (isGameScreen) {
+        if (isGlitchVisible) {
             updateLifepoints();
         }
         if (lifepoints <= 0) {
@@ -129,7 +146,7 @@ function update() {
         if (isGlitchOver()) {
             isGlitchVisible = false;
             timers[4] = 0;
-            initGlitch((glitch.tilesInRow + 1) * (glitch.tilesInRow + 1));
+            createNewGlitch((glitch.tilesInRow + 1) * (glitch.tilesInRow + 1));
             calculateColorOccurrencesArray();
             colorToMatch = findNextColorToMatch();
         }
@@ -162,37 +179,6 @@ function updateLifepoints() {
 
 function changeCurrentQuoteId() {
     currentQuoteId = (currentQuoteId + 1) % quotes.length;
-}
-
-function updateOld() {
-    if (isMainScreen && !isGameOver && !isGameScreen) {
-        updatePlayer(); // I like to move the player in the main screen
-        if (enterPressed || screenTouched) {
-            isGameOver = false;
-            isMainScreen = false;
-            isGameScreen = true;
-            descriptionTextPos = 0;
-        }
-    } else if (!isGameOver && isGameScreen) {
-        updatePlayer();
-        updateGlitch();
-        updateColorToMatch();
-        //    checkGameover();
-    } else {
-        if ((enterPressed || screenTouched) && !isGameScreen) {
-            isGameOver = false;
-            isMainScreen = true;
-            isGameScreen = false;
-            descriptionTextPos = 0;
-            clearGame();
-            clearView();
-            location.reload(); //TODO: do it better
-        }
-    }
-}
-
-function clearGame() {
-
 }
 
 function isGlitchTileSelected(glitchTile, touchPosition) {

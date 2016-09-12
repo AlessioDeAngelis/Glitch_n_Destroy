@@ -190,6 +190,11 @@ function draw() {
 }
 
 function drawGameOverScreen() {
+    //draw play button
+    drawPixelWord(externalContext, playButton[0], playButton[1], playButton[2], playButton[5], "white");
+    //draw rules button
+    drawPixelWord(externalContext, rulesButton[0], rulesButton[1], rulesButton[2], rulesButton[5], "white");
+    //draw the game over text
     var pixelSize = 8;
     drawPixelWord(ctx, "GAME OVER", canvas.width / 2 - 4 * pixelSize * 4, canvas.height / 4 - pixelSize / 2, pixelSize, "white");
     drawPixelWord(ctx, "YOUR SCORE IS " + score, canvas.width / 2 - 4 * pixelSize * 7, canvas.height / 2 - pixelSize / 2, pixelSize, "white");
@@ -254,18 +259,15 @@ function drawMainScreen() {
 }
 
 function drawNoise() {
-    for (var i = 0; i < glitch.tiles.length; i++) {
-        var tile = glitch.tiles[i];
-        if (tile.colorId > 0) {
-            for (var j = 0; j < tile.width; j++) {
-                ctx.beginPath();
-                ctx.rect(Math.random() * tile.width + tile.pos.x, Math.random() * tile.height + tile.pos.y, 1, Math.floor(Math.random() * 5));
-                ctx.fillStyle = "rgb(" + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + ")";
-                ctx.fill();
-                ctx.closePath();
-                ctx.save();
-                ctx.restore();
-            }
+    for (var i = 0; i < canvas.height; i++) {
+        for (var j = 0; j < 10; j++) {
+            ctx.beginPath();
+            ctx.rect(Math.random() * canvas.width, i, Math.random(), Math.random());
+            ctx.fillStyle = "rgb(" + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + "," + Math.floor(Math.random() * 255) + ")";
+            ctx.fill();
+            ctx.closePath();
+            ctx.save();
+            ctx.restore();
         }
     }
 }
