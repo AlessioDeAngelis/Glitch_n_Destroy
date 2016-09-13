@@ -1,7 +1,6 @@
 /**
  * Created by a.deangelis on 22/08/2016.
  */
-
 function createNewGlitch(glitchSize) {
     console.log("CREATING A NEW GLITCH");
     glitch = new Glitch();
@@ -30,17 +29,13 @@ function createNewGlitch(glitchSize) {
 
 function startGlitchNDestroy() {
     console.log("START NEW GAME");
-    // highscore = localStorage.highscore;
-    // if (typeof (highscore) === "undefined") {
-    //     highscore = 0;
-    // }
     clearGame();
     initQuotes();
     initMainScreenButtons();
     initPixelLetters();
     initTimers();
     generateGlitchWords(1);
-    // startNewGame();
+    startNewGame();
     gameLoop();
 }
 
